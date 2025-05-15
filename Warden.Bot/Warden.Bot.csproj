@@ -16,6 +16,14 @@
 
     <ItemGroup>
       <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.2.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="NetCord.Hosting.AspNetCore" Version="1.0.0-alpha.367" />
       <PackageReference Include="NetCord.Hosting.Services" Version="1.0.0-alpha.367" />
       <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.367" />
@@ -23,6 +31,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Warden.ServiceDefaults\Warden.ServiceDefaults.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>

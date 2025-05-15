@@ -7,6 +7,7 @@ using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services;
 using NetCord.Hosting.Services.ApplicationCommands;
 using NetCord.Hosting.Services.ComponentInteractions;
+using Warden.Bot;
 using Warden.Bot.Services;
 using Warden.Bot.TypeReaders;
 using Warden.ServiceDefaults;
@@ -19,6 +20,8 @@ builder.Services
     .AddLogging();
 
 builder.AddServiceDefaults();
+
+builder.AddNpgsqlDbContext<WardenDbContext>("postgres");
 
 // warden services
 builder.Services.AddScoped<GuildConfigService>();
