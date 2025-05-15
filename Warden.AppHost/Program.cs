@@ -3,13 +3,18 @@ using Projects;
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder
-    .AddPostgres("postgres")
-    .WithDbGate()
-    .WithLifetime(ContainerLifetime.Persistent)
-    .AddDatabase("wardendb");
+    .AddPostgres("postgres", port: 5432)
+    .WithEndpoint(name: "postgresEndpoint", targetPort: 5432)
+    .WithDbGate();
+    // .WithLifetime(ContainerLifetime.Persistent);
+
+
+var migrations = builder.AddProject<Warden_MigrationService>("migrations")
+    .WithReference(postgres)
+    .WaitFor(postgres);
 
 builder.AddProject<Warden_Bot>("bot")
-    .WaitFor(postgres)
+    .WaitForCompletion(migrations)
     .WithReference(postgres);
 
 builder.Build().Run();

@@ -1,6 +1,4 @@
 ﻿using NetCord.Rest;
-using Warden.Bot.Extensions;
-using Warden.Bot.Services;
 
 namespace Warden.Bot.Modules.Scrim;
 

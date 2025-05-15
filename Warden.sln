@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warden.Bot", "Warden.Bot\Warden.Bot.csproj", "{3B721E12-22D1-4717-9AB7-F321E4E0EE9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D45C0F70-311E-4096-B4A8-5D60384214C9}"
@@ -11,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warden.AppHost", "Warden.AppHost\Warden.AppHost.csproj", "{3D9DDA24-DCCA-424C-92E6-F5ABA9A0564C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warden.ServiceDefaults", "Warden.ServiceDefaults\Warden.ServiceDefaults.csproj", "{B246C81A-9EBC-4AAC-A28D-89ED6C04E78A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warden.Data", "Warden.Data\Warden.Data.csproj", "{C36A173B-A6CF-4EC0-8588-7CD260869CB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warden.MigrationService", "Warden.MigrationService\Warden.MigrationService.csproj", "{ACD4152C-1FF6-4444-A948-A68666A05B58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,13 @@ Global
 		{B246C81A-9EBC-4AAC-A28D-89ED6C04E78A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B246C81A-9EBC-4AAC-A28D-89ED6C04E78A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B246C81A-9EBC-4AAC-A28D-89ED6C04E78A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C36A173B-A6CF-4EC0-8588-7CD260869CB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C36A173B-A6CF-4EC0-8588-7CD260869CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C36A173B-A6CF-4EC0-8588-7CD260869CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C36A173B-A6CF-4EC0-8588-7CD260869CB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACD4152C-1FF6-4444-A948-A68666A05B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACD4152C-1FF6-4444-A948-A68666A05B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACD4152C-1FF6-4444-A948-A68666A05B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACD4152C-1FF6-4444-A948-A68666A05B58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

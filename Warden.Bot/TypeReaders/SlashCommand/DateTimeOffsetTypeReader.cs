@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using NetCord.Services;
 
-namespace Warden.Bot.TypeReaders;
+namespace Warden.Bot.TypeReaders.SlashCommand;
 
 public class DateTimeOffsetTypeReader<TContext> : SlashCommandTypeReader<TContext>
     where TContext : IApplicationCommandContext

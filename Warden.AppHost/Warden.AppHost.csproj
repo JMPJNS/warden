@@ -14,11 +14,12 @@
     <ItemGroup>
         <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.1"/>
         <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.2.1" />
-        <PackageReference Include="CommunityToolkit.Aspire.Hosting.PostgreSQL.Extensions" Version="9.4.1-beta.285" />
+        <PackageReference Include="CommunityToolkit.Aspire.Hosting.PostgreSQL.Extensions" Version="9.4.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Warden.Bot\Warden.Bot.csproj" />
+      <ProjectReference Include="..\Warden.MigrationService\Warden.MigrationService.csproj" />
     </ItemGroup>
 
 </Project>

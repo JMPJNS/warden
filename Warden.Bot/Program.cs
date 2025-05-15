@@ -1,15 +1,17 @@
 ﻿global using NetCord.Services.ApplicationCommands;
 global using NetCord.Services.ComponentInteractions;
 global using NetCord;
+global using Warden.Data;
+global using Warden.Data.Models;
+global using Warden.Bot.Extensions;
+global using Warden.Data.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services;
 using NetCord.Hosting.Services.ApplicationCommands;
 using NetCord.Hosting.Services.ComponentInteractions;
-using Warden.Bot;
-using Warden.Bot.Services;
-using Warden.Bot.TypeReaders;
+using Warden.Bot.TypeReaders.SlashCommand;
 using Warden.ServiceDefaults;
 
 

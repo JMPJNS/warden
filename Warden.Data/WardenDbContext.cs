@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Warden.Bot.Models;
+using Warden.Data.Models;
 
-namespace Warden.Bot;
+namespace Warden.Data;
 
 public class WardenDbContext: DbContext
 {
-    public DbSet<GuildConfig> GuildConfigs { get; set; }
+    public DbSet<GuildConfig> GuildConfigs => Set<GuildConfig>();
     
     public WardenDbContext(DbContextOptions<WardenDbContext> options)
         : base(options)

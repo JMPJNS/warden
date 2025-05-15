@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Warden.Bot.Models;
+namespace Warden.Data.Models;
 
 public class GuildConfig
 {
