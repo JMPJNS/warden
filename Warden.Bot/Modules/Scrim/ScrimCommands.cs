@@ -45,7 +45,7 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         await db.SaveChangesAsync();
         
         // TODO send embed to the scrims channel
-        // with 2 buttons, to sign up as partner (only team captains can click that), or to sign up as ringer (only players that aren't in eather of the teams can click that)
+        // with 2 buttons, to sign up as partner (only team captains can click that), or to sign up as ringer (only players that aren't in either of the teams can click that)
         
         await ModifyResponseAsync(message => message.Content = "Scrim was set up");
     }
