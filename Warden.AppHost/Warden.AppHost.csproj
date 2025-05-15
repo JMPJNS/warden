@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.1"/>
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>797149e8-7113-4aaa-b072-faa1e7cfcba5</UserSecretsId>
+        <RootNamespace>AppHost1</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.1"/>
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.2.1" />
+        <PackageReference Include="CommunityToolkit.Aspire.Hosting.PostgreSQL.Extensions" Version="9.4.1-beta.285" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Warden.Bot\Warden.Bot.csproj" />
+    </ItemGroup>
+
+</Project>
