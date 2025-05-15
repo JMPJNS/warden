@@ -7,5 +7,6 @@ public class Team
     /// discord role id
     /// </summary>
     public ulong RoleId { get; set; }
+    public string Name { get; set; }
     public virtual List<Player> Players { get; set; }
 }

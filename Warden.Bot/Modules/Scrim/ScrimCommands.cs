@@ -35,7 +35,7 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         
         var scrim = new Data.Models.Scrim
         {
-            Time = time.DateTime,
+            Time = time,
             Team1 = team,
             Team2 = null,
             Ringers = []
@@ -44,9 +44,7 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         await db.Scrims.AddAsync(scrim);
         await db.SaveChangesAsync();
         
-        // TODO send embed to the scrims channel
-        // with 2 buttons, to sign up as partner (only team captains can click that), or to sign up as ringer (only players that aren't in either of the teams can click that)
-        
+        await Context.Client.Rest.SendMessageAsync(guildConfig.ScrimChannelId, ScrimMessageBuilder.Build(scrim));
         await ModifyResponseAsync(message => message.Content = "Scrim was set up");
     }
 }

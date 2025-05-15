@@ -17,5 +17,7 @@ public class Scrim
     public virtual Team? Team2 { get; set; }
     public int? Team2Id { get; set; }
     
-    public DateTime Time { get; set; }
+    public DateTimeOffset Time { get; set; }
+    
+    public bool Cancelled { get; set; }
 }

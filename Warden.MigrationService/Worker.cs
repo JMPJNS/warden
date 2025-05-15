@@ -21,11 +21,12 @@ public class Worker(
             var dbContext = scope.ServiceProvider.GetRequiredService<WardenDbContext>();
 
             await RunMigrationAsync(dbContext, cancellationToken);
-            await SeedDataAsync(dbContext, cancellationToken);
+            // TODO figure out how to only seed the first time
+            // await SeedDataAsync(dbContext, cancellationToken);
         }
         catch (Exception ex)
         {
-            activity?.RecordException(ex);
+            activity?.AddException(ex);
             throw;
         }
 

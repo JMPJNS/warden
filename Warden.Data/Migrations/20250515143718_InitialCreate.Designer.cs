@@ -12,8 +12,8 @@ using Warden.Data;
 namespace Warden.Data.Migrations
 {
     [DbContext(typeof(WardenDbContext))]
-    [Migration("20250515104741_Scrims")]
-    partial class Scrims
+    [Migration("20250515143718_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
