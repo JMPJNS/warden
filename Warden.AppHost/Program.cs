@@ -6,7 +6,8 @@ var postgres = builder
     .AddPostgres("postgres", port: 5437)
     .WithEndpoint(name: "postgresEndpoint", targetPort: 5437)
     .WithDbGate()
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithVolume("postgres-data", "/var/lib/postgresql/data");
 
 
 var migrations = builder.AddProject<Warden_MigrationService>("migrations")

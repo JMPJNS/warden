@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Chronic.Core;
+using Microsoft.EntityFrameworkCore;
 using NetCord.Rest;
 
 namespace Warden.Bot.Modules.Scrim;
@@ -6,8 +7,19 @@ namespace Warden.Bot.Modules.Scrim;
 public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): ApplicationCommandModule<ApplicationCommandContext>
 {
     [SlashCommand("scrim", "Sign up for a scrim!", Contexts = [InteractionContextType.Guild])]
-    public async Task Scrim([SlashCommandParameter(Description = "time in UTC (eg. 20:00 or 8PM)")] DateTimeOffset time)
+    public async Task Scrim([SlashCommandParameter(Description = "time in UTC (eg. 20:00, 8pm, monday at 8pm...)")] string time)
     {
+        var parser = new Parser();
+        var res = parser.Parse(time);
+        var parsedTime = res?.Start;
+        if (parsedTime is null)
+        {
+            await ModifyResponseAsync(message => message.Content = "Could not parse time, please try a simpler expression.");
+            return;
+        }
+        
+        var dateTimeOffset = new DateTimeOffset(parsedTime!.Value, TimeSpan.Zero);
+        
         var callback = InteractionCallback.DeferredMessage(MessageFlags.Ephemeral);
         await RespondAsync(callback);
         
@@ -35,7 +47,7 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         
         var scrim = new Data.Models.Scrim
         {
-            Time = time,
+            Time = dateTimeOffset,
             Team1 = team,
             Team2 = null,
             Ringers = []
@@ -44,7 +56,10 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         await db.Scrims.AddAsync(scrim);
         await db.SaveChangesAsync();
         
-        await Context.Client.Rest.SendMessageAsync(guildConfig.ScrimChannelId, ScrimMessageBuilder.Build(scrim));
+        var msg = await Context.Client.Rest.SendMessageAsync(guildConfig.ScrimChannelId, ScrimMessageBuilder.Build(scrim));
+        scrim.ScrimMsgId = msg.Id;
+        await db.SaveChangesAsync();
+        
         await ModifyResponseAsync(message => message.Content = "Scrim was set up");
     }
 }

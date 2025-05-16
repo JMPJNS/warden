@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 
 namespace Warden.Bot.Modules.Scrim;
 
-public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): ComponentInteractionModule<ButtonInteractionContext>
+public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<ScrimButtons> logger): ComponentInteractionModule<ButtonInteractionContext>
 {
     [ComponentInteraction("join scrim")]
     public async Task JoinScrim(int scrimId)
@@ -18,7 +19,9 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): Component
 
         if (scrim is null)
         {
-            await ModifyResponseAsync(message => message.Content = "Scrim not found");
+            var errorMessage = $"Scrim with ID: {scrimId} doesn't exist";
+            logger.LogError(errorMessage);
+            await ModifyResponseAsync(message => message.Content = errorMessage);
             return;
         }
 
@@ -58,6 +61,38 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): Component
         await ModifyResponseAsync(message => message.Content = "Signed up");
     }
 
+    [ComponentInteraction("scrim looking ringer")]
+    public async Task LookForRinger(int scrimId)
+    {
+        var callback = InteractionCallback.DeferredMessage(MessageFlags.Ephemeral);
+        await RespondAsync(callback);
+        
+        var scrim = db.Scrims
+            .FirstOrDefault(x => x.Id == scrimId);
+        
+        if (scrim is null)
+        {
+            var errorMessage = $"Scrim with ID: {scrimId} doesn't exist";
+            logger.LogError(errorMessage);
+            await ModifyResponseAsync(message => message.Content = errorMessage);
+            return;
+        }
+
+        var guildConfig = await gcs.GetConfig(Context.Guild!.Id);
+
+        if (guildConfig is null)
+        {
+            await ModifyResponseAsync(message => message.Content = "Guild is not configured");
+            return;
+        }
+        
+        var msg = await Context.Client.Rest.SendMessageAsync(guildConfig.RingerChannelId, ScrimMessageBuilder.BuildRingerMessage(scrim));
+        scrim.RingerMsgId = msg.Id;
+        await db.SaveChangesAsync();
+        
+        await ModifyResponseAsync(message => message.Content = "Sent");
+    }
+
     [ComponentInteraction("scrim ringer")]
     public async Task JoinScrimAsRinger(int scrimId)
     {
@@ -71,13 +106,21 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): Component
 
         if (scrim is null)
         {
-            await ModifyResponseAsync(message => message.Content = "Scrim not found");
+            var errorMessage = $"Scrim with ID: {scrimId} doesn't exist";
+            logger.LogError(errorMessage);
+            await ModifyResponseAsync(message => message.Content = errorMessage);
             return;
         }
 
+        // first check if user is already signed up as ringer
         if (scrim.Ringers.Contains(Context.User.Id))
         {
-            await ModifyResponseAsync(message => message.Content = "You already signed up as a ringer, use cancel to leave");
+            scrim.Ringers.Remove(Context.User.Id);
+            await db.SaveChangesAsync();
+            
+            await UpdateScrimMessage(scrim);
+            
+            await ModifyResponseAsync(message => message.Content = "Left scrim as ringer");
             return;
         }
         
@@ -86,7 +129,7 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): Component
         
         await UpdateScrimMessage(scrim);
         
-        await ModifyResponseAsync(message => message.Content = $"Signed up, be there at <t:{scrim.Time.ToUnixTimeSeconds()}>!");
+        await ModifyResponseAsync(message => message.Content = $"Signed up, be there at <t:{scrim.Time.ToUnixTimeSeconds()}>! Click the button again to leave");
     }
 
     [ComponentInteraction("scrim cancel")]
@@ -102,20 +145,9 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): Component
 
         if (scrim is null)
         {
-            await ModifyResponseAsync(message => message.Content = "Scrim not found");
-            return;
-        }
-        
-        // first check if user is signed up as ringer
-
-        if (scrim.Ringers.Contains(Context.User.Id))
-        {
-            scrim.Ringers.Remove(Context.User.Id);
-            await db.SaveChangesAsync();
-            
-            await UpdateScrimMessage(scrim);
-            
-            await ModifyResponseAsync(message => message.Content = "Left scrim as ringer");
+            var errorMessage = $"Scrim with ID: {scrimId} doesn't exist";
+            logger.LogError(errorMessage);
+            await ModifyResponseAsync(message => message.Content = errorMessage);
             return;
         }
         
@@ -172,7 +204,24 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs): Component
     
     private async Task UpdateScrimMessage(Data.Models.Scrim scrim, bool cancelled = false)
     {
-        await Context.Client.Rest.ModifyMessageAsync(Context.Channel.Id, Context.Message.Id, m =>
+        var guildConfig = await gcs.GetConfig(Context.Guild!.Id);
+        if (guildConfig is null)
+        {
+            await ModifyResponseAsync(message => message.Content = "Guild is not configured");
+            return;
+        }
+        
+        var msgId = scrim.ScrimMsgId;
+
+        if (msgId is null)
+        {
+            await ModifyResponseAsync(message => message.Content = $"Scrim message for ID: {scrim.Id} not found");
+            return;       
+        }
+        
+        var channelId = guildConfig.ScrimChannelId;
+        
+        await Context.Client.Rest.ModifyMessageAsync(channelId, (ulong)msgId, m =>
         {
             var scrimMsg = ScrimMessageBuilder.Build(scrim, cancelled);
             m.Content = scrimMsg.Content;

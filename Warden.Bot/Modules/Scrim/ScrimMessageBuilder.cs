@@ -7,8 +7,7 @@ public class ScrimMessageBuilder
     public static MessageProperties Build(Data.Models.Scrim scrim, bool cancelled = false)
     {
         var embed = new EmbedProperties()
-            .WithTitle(cancelled ? "~~Scrim Cancelled~~" : $"Scrim at <t:{scrim.Time.ToUnixTimeSeconds()}>")
-            .WithTimestamp(scrim.Time.DateTime)
+            .WithTitle(cancelled ? "~~Scrim Cancelled~~" : $"Scrim on <t:{scrim.Time.ToUnixTimeSeconds()}>")
             .WithFields([
                 new EmbedFieldProperties()
                     .WithInline()
@@ -36,9 +35,29 @@ public class ScrimMessageBuilder
             .WithComponents([
                 new ActionRowProperties()
                     .AddButtons(new ButtonProperties($"join scrim:{scrim.Id}", "Sign up", ButtonStyle.Primary),
-                        new ButtonProperties($"scrim ringer:{scrim.Id}", "Sign up as Ringer", ButtonStyle.Secondary),
+                        new ButtonProperties($"scrim looking ringer:{scrim.Id}", "Ask for Ringer", ButtonStyle.Secondary),
                         new ButtonProperties($"scrim cancel:{scrim.Id}", "Cancel", ButtonStyle.Danger))
             ])
             .WithAllowedMentions(AllowedMentionsProperties.None);
+    }
+
+    public static MessageProperties BuildRingerMessage(Data.Models.Scrim scrim)
+    {
+        var embed = new EmbedProperties()
+            .WithTitle($"Scrim on <t:{scrim.Time.ToUnixTimeSeconds()}>")
+            .WithDescription($"Looking for <@&1364234481115988048>!");
+        
+        return new MessageProperties()
+            .WithEmbeds([
+                embed
+            ])
+            .WithComponents([
+                new ActionRowProperties()
+                    .AddButtons(new ButtonProperties($"scrim ringer:{scrim.Id}", "Sign up", ButtonStyle.Primary))
+            ])
+            .WithAllowedMentions(new()
+            {
+                AllowedRoles = [1364234481115988048]
+            });;
     }
 }

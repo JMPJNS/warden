@@ -7,7 +7,10 @@ public class Scrim
     /// list of discord user ids
     /// </summary>
     public List<ulong> Ringers { get; set; }
-
+    
+    public ulong? ScrimMsgId { get; set; }
+    public ulong? RingerMsgId { get; set; }
+    
     public virtual Team Team1 { get; set; }
     public int Team1Id { get; set; }
     

@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.2.1" />
+      <PackageReference Include="Chronic.Core" Version="0.4.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
