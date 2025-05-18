@@ -4,10 +4,10 @@ namespace Warden.Bot.Modules.Scrim;
 
 public class ScrimMessageBuilder
 {
-    public static MessageProperties Build(Data.Models.Scrim scrim, bool cancelled = false)
+    public static MessageProperties Build(Data.Models.Scrim scrim)
     {
         var embed = new EmbedProperties()
-            .WithTitle(cancelled ? "~~Scrim Cancelled~~" : $"Scrim on <t:{scrim.Time.ToUnixTimeSeconds()}>")
+            .WithTitle(scrim.Cancelled ? "~~Scrim Cancelled~~" : $"Scrim on <t:{scrim.Time.ToUnixTimeSeconds()}>")
             .WithFields([
                 new EmbedFieldProperties()
                     .WithInline()
@@ -27,18 +27,24 @@ public class ScrimMessageBuilder
                 .WithName("Ringers")
                 .WithValue(ringerMentions));
         }
-        
-        return new MessageProperties()
+        var props =  new MessageProperties()
             .WithEmbeds([
                 embed
             ])
-            .WithComponents([
+            .WithAllowedMentions(AllowedMentionsProperties.None);
+
+        if (!scrim.Cancelled)
+        {
+            props = props.WithComponents([
                 new ActionRowProperties()
                     .AddButtons(new ButtonProperties($"join scrim:{scrim.Id}", "Sign up", ButtonStyle.Primary),
-                        new ButtonProperties($"scrim looking ringer:{scrim.Id}", "Ask for Ringer", ButtonStyle.Secondary),
+                        new ButtonProperties($"scrim looking ringer:{scrim.Id}", "Ask for Ringer",
+                            ButtonStyle.Secondary),
                         new ButtonProperties($"scrim cancel:{scrim.Id}", "Cancel", ButtonStyle.Danger))
-            ])
-            .WithAllowedMentions(AllowedMentionsProperties.None);
+            ]);
+        }
+
+        return props;
     }
 
     public static MessageProperties BuildRingerMessage(Data.Models.Scrim scrim)

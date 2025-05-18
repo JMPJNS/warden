@@ -47,6 +47,12 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
             return;       
         }
 
+        if (scrim.Team1.Id == team.Id)
+        {
+            await ModifyResponseAsync(message => message.Content = "You can't sign up for your own scrim");
+            return;    
+        }
+
         if (!user.HasRole(guildConfig.TeamCaptainRoleId))
         {
             await ModifyResponseAsync(message => message.Content = "Ask your team captain to set up a scrim");
@@ -109,6 +115,12 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
             var errorMessage = $"Scrim with ID: {scrimId} doesn't exist";
             logger.LogError(errorMessage);
             await ModifyResponseAsync(message => message.Content = errorMessage);
+            return;
+        }
+
+        if (scrim.Cancelled)
+        {
+            await ModifyResponseAsync(message => message.Content = "Scrim was cancelled");
             return;
         }
 
@@ -183,7 +195,7 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
         {
             scrim.Cancelled = true;
             await db.SaveChangesAsync();
-            await UpdateScrimMessage(scrim, true);
+            await UpdateScrimMessage(scrim);
             
             await ModifyResponseAsync(message => message.Content = "Cancelled the scrim");
             // TODO notify the other participants
@@ -202,7 +214,7 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
         }
     }
     
-    private async Task UpdateScrimMessage(Data.Models.Scrim scrim, bool cancelled = false)
+    private async Task UpdateScrimMessage(Data.Models.Scrim scrim)
     {
         var guildConfig = await gcs.GetConfig(Context.Guild!.Id);
         if (guildConfig is null)
@@ -223,10 +235,10 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
         
         await Context.Client.Rest.ModifyMessageAsync(channelId, (ulong)msgId, m =>
         {
-            var scrimMsg = ScrimMessageBuilder.Build(scrim, cancelled);
+            var scrimMsg = ScrimMessageBuilder.Build(scrim);
             m.Content = scrimMsg.Content;
             m.Embeds = scrimMsg.Embeds;
-            m.Components = scrimMsg.Components;
+            m.Components = scrimMsg.Components ?? [];
             m.AllowedMentions = scrimMsg.AllowedMentions;
         });
     }

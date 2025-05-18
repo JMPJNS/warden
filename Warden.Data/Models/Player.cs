@@ -8,6 +8,6 @@ public class Player
     /// </summary>
     public ulong UserId { get; set; }
     
-    public virtual Team Team { get; set; }
-    public int TeamId { get; set; }
+    public virtual Team? Team { get; set; }
+    public int? TeamId { get; set; }
 }
