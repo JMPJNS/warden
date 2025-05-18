@@ -51,9 +51,10 @@ public class ScrimMessageBuilder
     {
         var embed = new EmbedProperties()
             .WithTitle($"Scrim on <t:{scrim.Time.ToUnixTime()}>")
-            .WithDescription($"Looking for <@&1364234481115988048>!");
+            .WithDescription($"Looking for Ringer!");
         
         return new MessageProperties()
+            .WithContent($"<@&1364234481115988048>")
             .WithEmbeds([
                 embed
             ])
@@ -64,6 +65,6 @@ public class ScrimMessageBuilder
             .WithAllowedMentions(new()
             {
                 AllowedRoles = [1364234481115988048]
-            });;
+            });
     }
 }

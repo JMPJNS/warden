@@ -16,7 +16,7 @@ public class SetupCommands(WardenDbContext db, PlayerService playerService): App
     }
 
     [SubSlashCommand("timezone", "Configure your timezone")]
-    public async Task Timezone([SlashCommandParameter(AutocompleteProviderType = typeof(TimeZoneAutocompleteProvider), Description = "e.g Europe/Vienna, UTC+02, Central European Time")] string timezone)
+    public async Task Timezone([SlashCommandParameter(AutocompleteProviderType = typeof(TimeZoneAutocompleteProvider), Description = "try typing your capital's name (e.g. Europe/Vienna, UTC+02, Central European Time)")] string timezone)
     {
         var callback = InteractionCallback.DeferredMessage(MessageFlags.Ephemeral);
         await RespondAsync(callback);
