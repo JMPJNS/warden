@@ -20,6 +20,13 @@ public class SetupCommands(WardenDbContext db, PlayerService playerService): App
     {
         var callback = InteractionCallback.DeferredMessage(MessageFlags.Ephemeral);
         await RespondAsync(callback);
+
+        // check if its a valid timezone
+        if (TimeZoneInfo.GetSystemTimeZones().All(x => x.Id != timezone))
+        {
+            await ModifyResponseAsync(message => message.Content = "Invalid timezone selected, choose from the autocomplete options");
+            return;       
+        }
         
         var player = await playerService.GetPlayer(Context.User.Id);
         await playerService.SetTimezone(player, timezone);
@@ -32,12 +39,29 @@ public class SetupCommands(WardenDbContext db, PlayerService playerService): App
         public async ValueTask<IEnumerable<ApplicationCommandOptionChoiceProperties>?> GetChoicesAsync(ApplicationCommandInteractionDataOption option, AutocompleteInteractionContext context)
         {
             var timezones = TimeZoneInfo.GetSystemTimeZones()
+                .Select(tz => new
+                {
+                    tz,
+                    StdAbbrev = string.Concat(
+                        tz.StandardName
+                            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(w => w[0])),
+                    DstAbbrev = string.Concat(
+                        tz.DaylightName
+                            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(w => w[0]))
+                })
                 .Where(x =>
-                    x.Id.Contains(option.Value ?? string.Empty, StringComparison.InvariantCultureIgnoreCase)
-                    || x.DisplayName.Contains(option.Value ?? string.Empty, StringComparison.InvariantCultureIgnoreCase))
-                .OrderBy(x => x.Id)
-                .Take(10)
-                .Select(x => new ApplicationCommandOptionChoiceProperties(x.DisplayName, x.Id));
+                    x.tz.Id.Contains(option.Value ?? string.Empty, StringComparison.InvariantCultureIgnoreCase)
+                    || x.tz.DisplayName.Contains(option.Value ?? string.Empty, StringComparison.InvariantCultureIgnoreCase)
+                    || x.StdAbbrev.Equals(option.Value ?? string.Empty, StringComparison.InvariantCultureIgnoreCase)
+                    || x.DstAbbrev.Equals(option.Value ?? string.Empty, StringComparison.InvariantCultureIgnoreCase)
+                )
+                .OrderBy(x => !(x.StdAbbrev.Equals(option.Value, StringComparison.InvariantCultureIgnoreCase)
+                                || x.DstAbbrev.Equals(option.Value, StringComparison.InvariantCultureIgnoreCase)))
+                .ThenBy(x => x.tz.Id, StringComparer.InvariantCultureIgnoreCase)
+                .Take(25)
+                .Select(x => new ApplicationCommandOptionChoiceProperties(x.tz.DisplayName, x.tz.Id));
             
             return timezones;
         }
