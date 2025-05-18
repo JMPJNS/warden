@@ -7,7 +7,7 @@ namespace Warden.Bot.Modules.Scrim;
 public class ScrimCommands(GuildConfigService gcs, WardenDbContext db, PlayerService playerService): ApplicationCommandModule<ApplicationCommandContext>
 {
     [SlashCommand("scrim", "Sign up for a scrim!", Contexts = [InteractionContextType.Guild])]
-    public async Task Scrim([SlashCommandParameter(Description = "time in UTC (eg. 20:00, in 2 hours, monday at 8pm...)")] string time)
+    public async Task Scrim([SlashCommandParameter(Description = "eg. 20:00, in 2 hours, monday at 8pm...")] string time)
     {
         var callback = InteractionCallback.DeferredMessage(MessageFlags.Ephemeral);
         await RespondAsync(callback);
