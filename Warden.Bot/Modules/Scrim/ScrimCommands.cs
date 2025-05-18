@@ -4,22 +4,11 @@ using NetCord.Rest;
 
 namespace Warden.Bot.Modules.Scrim;
 
-public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): ApplicationCommandModule<ApplicationCommandContext>
+public class ScrimCommands(GuildConfigService gcs, WardenDbContext db, PlayerService playerService): ApplicationCommandModule<ApplicationCommandContext>
 {
     [SlashCommand("scrim", "Sign up for a scrim!", Contexts = [InteractionContextType.Guild])]
-    public async Task Scrim([SlashCommandParameter(Description = "time in UTC (eg. 20:00, 8pm, monday at 8pm...)")] string time)
+    public async Task Scrim([SlashCommandParameter(Description = "time in UTC (eg. 20:00, in 2 hours, monday at 8pm...)")] string time)
     {
-        var parser = new Parser();
-        var res = parser.Parse(time);
-        var parsedTime = res?.Start;
-        if (parsedTime is null)
-        {
-            await ModifyResponseAsync(message => message.Content = "Could not parse time, please try a simpler expression.");
-            return;
-        }
-        
-        var dateTimeOffset = new DateTimeOffset(parsedTime!.Value, TimeSpan.Zero);
-        
         var callback = InteractionCallback.DeferredMessage(MessageFlags.Ephemeral);
         await RespondAsync(callback);
         
@@ -31,8 +20,29 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         }
         
         var user = await Context.Client.Rest.GetGuildUserAsync(Context.Guild!.Id, Context.User.Id);
+        var player = await playerService.GetPlayer(user.Id);
+
+        if (player.Timezone is null)
+        {
+            await ModifyResponseAsync(message => message.Content = "Please set your timezone first with /setup timezone");
+            return;
+        }
         
-        var team = await db.Teams.FirstOrDefaultAsync(x => x.Players.Any(p => p.UserId == user.Id));
+        var tz = TimeZoneInfo.FindSystemTimeZoneById(player.Timezone);
+        var nowInUserZone = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+        
+        var parser = new Parser(new Options { Clock = () => nowInUserZone});
+        var res = parser.Parse(time);
+        if (res?.Start is null)
+        {
+            await ModifyResponseAsync(message => message.Content = "Could not parse time, please try a simpler expression.");
+            return;
+        }
+
+        var localUserTime = DateTime.SpecifyKind(res.Start.Value, DateTimeKind.Unspecified);
+        var utcTime = TimeZoneInfo.ConvertTimeToUtc(localUserTime, tz);
+        
+        var team = player?.Team;
         if (team == null)
         {
             await ModifyResponseAsync(message => message.Content = "You are not part of a team");
@@ -47,7 +57,7 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db): Applicat
         
         var scrim = new Data.Models.Scrim
         {
-            Time = dateTimeOffset,
+            Time = utcTime.ToUniversalTime(),
             Team1 = team,
             Team2 = null,
             Ringers = []

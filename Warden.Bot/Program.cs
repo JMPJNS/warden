@@ -1,6 +1,7 @@
 ﻿global using NetCord.Services.ApplicationCommands;
 global using NetCord.Services.ComponentInteractions;
 global using NetCord;
+global using NetCord.Rest;
 global using Warden.Data;
 global using Warden.Data.Models;
 global using Warden.Bot.Extensions;
@@ -27,6 +28,7 @@ builder.AddNpgsqlDbContext<WardenDbContext>("postgres");
 
 // warden services
 builder.Services.AddScoped<GuildConfigService>();
+builder.Services.AddScoped<PlayerService>();
 
 // discord services
 builder.Services

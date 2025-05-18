@@ -141,7 +141,7 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
         
         await UpdateScrimMessage(scrim);
         
-        await ModifyResponseAsync(message => message.Content = $"Signed up, be there at <t:{scrim.Time.ToUnixTimeSeconds()}>! Click the button again to leave");
+        await ModifyResponseAsync(message => message.Content = $"Signed up, be there at <t:{scrim.Time.ToUnixTime()}>! Click the button again to leave");
     }
 
     [ComponentInteraction("scrim cancel")]

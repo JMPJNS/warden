@@ -14,4 +14,8 @@ public class WardenDbContext: DbContext
         : base(options)
     {
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+    }
 }

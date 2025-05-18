@@ -7,7 +7,7 @@ public class ScrimMessageBuilder
     public static MessageProperties Build(Data.Models.Scrim scrim)
     {
         var embed = new EmbedProperties()
-            .WithTitle(scrim.Cancelled ? "~~Scrim Cancelled~~" : $"Scrim on <t:{scrim.Time.ToUnixTimeSeconds()}>")
+            .WithTitle(scrim.Cancelled ? "~~Scrim Cancelled~~" : $"Scrim on <t:{scrim.Time.ToUnixTime()}>")
             .WithFields([
                 new EmbedFieldProperties()
                     .WithInline()
@@ -50,7 +50,7 @@ public class ScrimMessageBuilder
     public static MessageProperties BuildRingerMessage(Data.Models.Scrim scrim)
     {
         var embed = new EmbedProperties()
-            .WithTitle($"Scrim on <t:{scrim.Time.ToUnixTimeSeconds()}>")
+            .WithTitle($"Scrim on <t:{scrim.Time.ToUnixTime()}>")
             .WithDescription($"Looking for <@&1364234481115988048>!");
         
         return new MessageProperties()

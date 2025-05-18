@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Warden.Data;
@@ -11,9 +12,11 @@ using Warden.Data;
 namespace Warden.Data.Migrations
 {
     [DbContext(typeof(WardenDbContext))]
-    partial class WardenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518160637_ScrimDateTimeNoTz")]
+    partial class ScrimDateTimeNoTz
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace Warden.Data.Migrations
                     b.Property<int?>("TeamId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Timezone")
+                    b.Property<string>("TimeZone")
                         .HasColumnType("text");
 
                     b.Property<decimal>("UserId")
@@ -98,7 +101,7 @@ namespace Warden.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
