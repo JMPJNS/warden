@@ -53,7 +53,7 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
             return;    
         }
 
-        if (!user.HasRole(guildConfig.TeamCaptainRoleId))
+        if (!guildConfig.TeamCaptainRoleIds.Any(roleId => user.HasRole(roleId)))
         {
             await ModifyResponseAsync(message => message.Content = "Ask your team captain to set up a scrim");
             return;
@@ -185,7 +185,7 @@ public class ScrimButtons(WardenDbContext db, GuildConfigService gcs, ILogger<Sc
         }
         
         var user = await Context.Client.Rest.GetGuildUserAsync(Context.Guild!.Id, Context.User.Id);
-        if (!user.HasRole(guildConfig.TeamCaptainRoleId))
+        if (!guildConfig.TeamCaptainRoleIds.Any(roleId => user.HasRole(roleId)))
         {
             await ModifyResponseAsync(message => message.Content = "Ask your team captain to cancel");
             return;

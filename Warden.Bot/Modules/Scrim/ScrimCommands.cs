@@ -49,7 +49,7 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db, PlayerSer
             return;       
         }
 
-        if (!user.HasRole(guildConfig.TeamCaptainRoleId))
+        if (!guildConfig.TeamCaptainRoleIds.Any(roleId => user.HasRole(roleId)))
         {
             await ModifyResponseAsync(message => message.Content = "Ask your team captain to set up a scrim!");
             return;

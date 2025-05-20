@@ -8,5 +8,5 @@ public class GuildConfig
     public ulong GuildId { get; set; }
     public ulong ScrimChannelId { get; set; }
     public ulong RingerChannelId { get; set; }
-    public ulong TeamCaptainRoleId { get; set; }
+    public ulong[] TeamCaptainRoleIds { get; set; }
 }

@@ -57,7 +57,7 @@ public class Worker(
         {
             GuildId = 1372282859796037766,
             ScrimChannelId = 1372311258363334776,
-            TeamCaptainRoleId = 1372311911986761860
+            TeamCaptainRoleIds = [1372311911986761860]
         };
         
         var strategy = dbContext.Database.CreateExecutionStrategy();
