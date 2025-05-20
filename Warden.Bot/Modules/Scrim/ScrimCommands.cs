@@ -65,8 +65,19 @@ public class ScrimCommands(GuildConfigService gcs, WardenDbContext db, PlayerSer
         
         await db.Scrims.AddAsync(scrim);
         await db.SaveChangesAsync();
+
+        var channelId = guildConfig.ScrimChannelId;
+
+        // todo: make this configurable instead of hardcoding the channel ids
+        if (Context.Guild.Id == 1214565847419457576)
+        {
+            // eu channel
+            channelId = user.HasRole(1373769726701863062) ? (ulong)1373770032768745594 : (ulong)
+                // na channel
+                1364018922533425194;
+        }
         
-        var msg = await Context.Client.Rest.SendMessageAsync(guildConfig.ScrimChannelId, ScrimMessageBuilder.Build(scrim));
+        var msg = await Context.Client.Rest.SendMessageAsync(channelId, ScrimMessageBuilder.Build(scrim));
         scrim.ScrimMsgId = msg.Id;
         await db.SaveChangesAsync();
         
